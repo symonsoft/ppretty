@@ -1,4 +1,4 @@
-# ppretty v.1.0
+# ppretty v.1.1
 
 ## About
 Convert any python object to a human readable format.
