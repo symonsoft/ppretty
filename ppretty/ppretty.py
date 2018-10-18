@@ -134,7 +134,7 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
         extra_lines = []
         if type(current_obj) in seq_types or seq_type_descendant and isinstance(current_obj, seq_types):
             if isinstance(current_obj, dict):
-                obj_items = current_obj.items()
+                obj_items = list(current_obj.items())
             else:
                 obj_items = current_obj
 
@@ -217,3 +217,5 @@ if __name__ == '__main__':
             self.www = 'Very long text Bla-Bla-Bla'
 
     print(ppretty(E(), str_length=19))
+
+    print(ppretty({x: x for x in range(10)}))

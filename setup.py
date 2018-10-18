@@ -4,12 +4,12 @@ from distutils.core import setup
 setup(
     name='ppretty',
     packages=['ppretty'],
-    version='1.1',
+    version='1.2',
     description='Convert python objects to a human readable format',
     author='SymonSoft',
     author_email='symonsoft@gmail.com',
     url='https://github.com/symonsoft/ppretty',
-    download_url='https://github.com/symonsoft/ppretty/tarball/1.1',
+    download_url='https://github.com/symonsoft/ppretty/tarball/1.2',
     keywords=['pretty', 'print', 'format', 'object', 'human', ''],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

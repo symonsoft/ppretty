@@ -1,3 +1,3 @@
-from ppretty import ppretty
+from .ppretty import ppretty
 
 __all__ = 'ppretty'

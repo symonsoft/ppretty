@@ -1,7 +1,9 @@
-# ppretty v.1.1
+# ppretty v.1.2
 
 ## About
-Convert any python object to a human readable format.
+Converts any python object to a human readable format.
+
+Supports **Python 2.7** and higher.
 
 ## Installation
 ```sh
