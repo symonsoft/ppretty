@@ -121,7 +121,14 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
                     else:
                         (k, v) = i
                         k = [k]
-                        v = inspect_nested_object(v) if type(v) is not ErrorAttr else ['<Error attribute: ' + type(v.e).__name__ + ': ' + v.e.message + '>']
+                        if type(v) is ErrorAttr:
+                            e_message = '<Attribute error: ' + type(v.e).__name__
+                            if hasattr(v.e, 'message'):
+                                e_message += ': ' + v.e.message
+                            e_message += '>'
+                            v = [e_message]
+                        else:
+                            v = inspect_nested_object(v)
                         k[-1] += ' = ' + v.pop(0)
                         r.extend(k)
                         r.extend(format_block(v))
