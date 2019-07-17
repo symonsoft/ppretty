@@ -7,7 +7,7 @@ import sys
 
 def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
             show_protected=False, show_private=False, show_static=False, show_properties=False, show_address=False,
-            str_length=50):
+            str_length=50, ignore_types=None):
     """Represents any python object in a human readable format.
 
     :param obj: An object to represent.
@@ -32,6 +32,8 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
     :type show_address: bool
     :param str_length: Maximum string length. Default is 50.
     :type str_length: int
+    :param ignore_types: Types which are ignored and show as `obj.__str__()`. Default is None.
+    :type ignore_types: None or list
 
     :return: The final representation of the object.
     :rtype: str
@@ -64,6 +66,12 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
         # None
         if current_obj is None:
             return ['None']
+
+        # Ignored Types
+        if ignore_types is not None and ignore_types is not [None]:
+            for cls in ignore_types:
+                if isinstance(current_obj, cls):
+                    return [str(current_obj)]
 
         # Format block of lines
         def format_block(lines, open_bkt='', close_bkt=''):
@@ -213,7 +221,6 @@ if __name__ == '__main__':
         class D(object):
             pass
 
-
     print(ppretty(C(), indent='    ', depth=8, width=41, seq_length=100,
                   show_static=True, show_protected=True, show_properties=True, show_address=True))
     print(ppretty(C(), depth=8, width=200, seq_length=4))
@@ -226,3 +233,23 @@ if __name__ == '__main__':
     print(ppretty(E(), str_length=19))
 
     print(ppretty({x: x for x in range(10)}))
+
+
+    from pathlib import Path
+    class BaseConfig:
+        def __str__(self):
+            return ppretty(self, show_properties=True, show_static=True, str_length=999999999999999, seq_length=9999999999999, depth=9, ignore_types=[Path])
+
+        def __repr__(self):
+            return self.__str__()
+
+    class TestConfig(BaseConfig):
+        clk_prop = 10
+        def __init__(self):
+            self.test1 = 11
+            self.test2 = 23
+            self.test3 = Path('~/.bashrc')
+            self.test4 = BaseConfig()
+            self.test4.path = Path('/etc/passwd')
+    t = TestConfig()
+    print(t)
