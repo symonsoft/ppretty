@@ -42,6 +42,7 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
     seq_brackets = {list: ('[', ']'), tuple: ('(', ')'), set: ('set([', '])'), dict: ('{', '}')}
     seq_types = tuple(seq_brackets.keys())
     basestring_type = basestring if sys.version_info[0] < 3 else str
+    ignore_types = ignore_types if ignore_types is None else list(filter(lambda cls: cls is not None, ignore_types))
 
     def inspect_object(current_obj, current_depth, current_width, seq_type_descendant=False):
         inspect_nested_object = partial(inspect_object,
@@ -68,10 +69,8 @@ def ppretty(obj, indent='    ', depth=4, width=72, seq_length=5,
             return ['None']
 
         # Ignored Types
-        if ignore_types is not None and ignore_types is not [None]:
-            for cls in ignore_types:
-                if isinstance(current_obj, cls):
-                    return [str(current_obj)]
+        if ignore_types and isinstance(current_obj, tuple(ignore_types)):
+            return [str(current_obj)]
 
         # Format block of lines
         def format_block(lines, open_bkt='', close_bkt=''):
@@ -235,10 +234,18 @@ if __name__ == '__main__':
     print(ppretty({x: x for x in range(10)}))
 
 
-    from pathlib import Path
+    import os.path as osp
+    class FakePath:
+        def __init__(self, *args):
+            self.path = osp.join(*args)
+            self.dirname = osp.dirname(self.path)
+            self.other_attr = 'you never want show it when ppretty'
+        def __str__(self):
+            return self.path
+
     class BaseConfig:
         def __str__(self):
-            return ppretty(self, show_properties=True, show_static=True, str_length=999999999999999, seq_length=9999999999999, depth=9, ignore_types=[Path])
+            return ppretty(self, show_properties=True, show_static=True, str_length=99, seq_length=9, depth=9, ignore_types=[FakePath])
 
         def __repr__(self):
             return self.__str__()
@@ -248,8 +255,8 @@ if __name__ == '__main__':
         def __init__(self):
             self.test1 = 11
             self.test2 = 23
-            self.test3 = Path('~/.bashrc')
+            self.test3 = FakePath('~/.bashrc')
             self.test4 = BaseConfig()
-            self.test4.path = Path('/etc/passwd')
+            self.test4.path = FakePath('/etc/passwd')
     t = TestConfig()
     print(t)
